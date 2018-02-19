@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "348284166774",
+    "firebase_url": "https://projekttestowy-d91a2.firebaseio.com",
+    "project_id": "projekttestowy-d91a2",
+    "storage_bucket": "projekttestowy-d91a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348284166774:android:e36530acea2e0b0b",
+        "android_client_info": {
+          "package_name": "pl.szyszjola.firebasegallery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "348284166774-fbpjttcj28uarkqea2ebr3r1734pelnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.szyszjola.firebasegallery",
+            "certificate_hash": "73d87baa81670c098adda343af51d8b67b5e370f"
+          }
+        },
+        {
+          "client_id": "348284166774-738as66m4fh9k8rq37raitc8tlp35kc0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD97W2gTZg6GQNc99_yfrQ1KvfI0_72qz0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "348284166774-738as66m4fh9k8rq37raitc8tlp35kc0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
