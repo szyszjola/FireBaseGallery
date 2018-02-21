@@ -10,32 +10,38 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MainRecyclerView extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private static final int PERMISSION_REQUEST_CODE = 1;
     private RecyclerView recyclerView;
     private MainRecyclerViewAdapter viewAdapter;
-    private ArrayList<Picture.SinglePicture> pictureList = new ArrayList<>();
+    private List<Picture.SinglePicture> pictureList = new ArrayList<>();
     final String  TAG = "TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_recycler_view);
-
         //getting Permission
         if (Build.VERSION.SDK_INT >= 23)
         {
             if (checkPermission())
             {
-                Log.w("dd", "dd");
-                // firebaseUpload();
-                // Code for above or equal 23 API Oriented Device
-                // Your Permission granted already .Do next code
+                Log.w("Permission", "You have permission to access");
+
             } else {
-                Log.w("ddll", "dd");
+                Log.w("Permission", "Requesting for permission");
                 requestPermission(); // Code for permission
             }
         }
@@ -44,18 +50,36 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
 
         }
 
-        pictureList.add(new Picture.SinglePicture("Petra Ral", "photo/avatar.jpg", "fff"));
-        pictureList.add(new Picture.SinglePicture("Inna Petra", "photo/girl2.png", "dddsds"));
-        pictureList.add(new Picture.SinglePicture("Inna Petra", "photo/girl4.png", "dddsds"));
-        pictureList.add(new Picture.SinglePicture("Inna Petra", "photo/girl4.png", "dddsds"));
-        //Creating recycler view and bind it with Adapter
         recyclerView = findViewById(R.id.recyclew_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
         viewAdapter = new MainRecyclerViewAdapter(pictureList, this);
-        recyclerView.setAdapter(viewAdapter);
+
+        //pobieranie danych z bazy danych
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Picture.SinglePicture> td = (List<Picture.SinglePicture>) dataSnapshot.getValue();
+              Log.w(TAG, td.toString());
+                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                    Log.v(TAG,""+ childDataSnapshot.getKey()); //displays the key for the node
+                    Log.v(TAG,""+ childDataSnapshot.getValue());   //gives the value for given keyname
+
+                    Map<String, String> map = (Map<String, String>) childDataSnapshot.getValue();
+                    pictureList.add(new Picture.SinglePicture(map.get("title").toString(),map.get("image").toString(),map.get("description").toString()));
+                }
+                recyclerView.setAdapter(viewAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "Failed to read value ", databaseError.toException());
+            }
+        });
 
     }
 
@@ -90,4 +114,6 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
                 break;
         }
     }
+
+
 }

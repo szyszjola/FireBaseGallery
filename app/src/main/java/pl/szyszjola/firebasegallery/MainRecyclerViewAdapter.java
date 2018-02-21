@@ -8,18 +8,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.storage.StorageReference;
-
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Picture.SinglePicture> singlePictureArrayList;
+    private List<Picture.SinglePicture> singlePictureArrayList;
     private Context mContext;
-    private FireBaseConector conector = new FireBaseConector();
+    private FireBaseStorageConector conector = new FireBaseStorageConector();
 
-    public MainRecyclerViewAdapter(ArrayList<Picture.SinglePicture> singlePictureArrayList, Context mContext) {
+    MainRecyclerViewAdapter(List<Picture.SinglePicture> singlePictureArrayList, Context mContext) {
         this.singlePictureArrayList = singlePictureArrayList;
         this.mContext = mContext;
     }
@@ -49,7 +47,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         ImageView image;
         TextView title;
         TextView description;
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
             title = itemView.findViewById(R.id.title);

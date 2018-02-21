@@ -1,17 +1,12 @@
 package pl.szyszjola.firebasegallery;
 
-import java.util.ArrayList;
 import java.util.List;
 public class Picture {
 
-    List<SinglePicture> singlePicture;
+    private List<SinglePicture> singlePicture;
 
     public Picture(List<SinglePicture> singlePicture) {
         this.singlePicture = singlePicture;
-    }
-
-    public List<SinglePicture> getSinglePicture() {
-        return singlePicture;
     }
 
     static class SinglePicture
@@ -20,7 +15,7 @@ public class Picture {
         private String image;
         private String description;
 
-        public SinglePicture(String title, String image, String description) {
+        SinglePicture(String title, String image, String description) {
             this.title = title;
             this.image = image;
             this.description = description;
@@ -42,7 +37,7 @@ public class Picture {
             this.image = image;
         }
 
-        public String getDescription() {
+        String getDescription() {
             return description;
         }
 

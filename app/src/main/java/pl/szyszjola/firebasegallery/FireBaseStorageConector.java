@@ -20,15 +20,12 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by jolanta.szyszkiewicz on 2018.02.16.
- */
 
-public class FireBaseConector {
+public class FireBaseStorageConector {
 
     private StorageReference storage;
 
-    public FireBaseConector() {
+    FireBaseStorageConector() {
         storage = FirebaseStorage.getInstance().getReference();
     }
 
@@ -67,7 +64,7 @@ public class FireBaseConector {
         Log.w("dd", "dd");
     }
 
-    public void firebaseDownload(final ImageView imageView, String path) {
+    void firebaseDownload(final ImageView imageView, String path) {
 
         StorageReference avatarRef = storage.child(path);
         final long ONE_MEGABYTE = 1024 * 1024;
