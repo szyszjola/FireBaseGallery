@@ -3,6 +3,7 @@ package pl.szyszjola.firebasegallery;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -64,13 +65,14 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Picture.SinglePicture> td = (List<Picture.SinglePicture>) dataSnapshot.getValue();
-              Log.w(TAG, td.toString());
+                assert td != null : "Baza danych jest pusta";
+                Log.w(TAG, td.toString());
                 for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
                     Log.v(TAG,""+ childDataSnapshot.getKey()); //displays the key for the node
                     Log.v(TAG,""+ childDataSnapshot.getValue());   //gives the value for given keyname
 
                     Map<String, String> map = (Map<String, String>) childDataSnapshot.getValue();
-                    pictureList.add(new Picture.SinglePicture(map.get("title").toString(),map.get("image").toString(),map.get("description").toString()));
+                    pictureList.add(new Picture.SinglePicture(map.get("title"), map.get("image"), map.get("description")));
                 }
                 recyclerView.setAdapter(viewAdapter);
             }
@@ -86,11 +88,7 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -103,7 +101,7 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
