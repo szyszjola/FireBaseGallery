@@ -32,6 +32,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:26.1.0'
     compile 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.google.android.gms:play-services-auth:11.8.0'
+    implementation 'com.android.support:design:26.1.0'
 }
 
 allprojects {
@@ -39,11 +40,12 @@ allprojects {
         google()
 
         // If you're using a version of Gradle lower than 4.1, you must instead use:
-         maven {
-             url 'https://maven.google.com'
-         }
+        maven {
+            url 'https://maven.google.com'
+        }
     }
 }
+
 
 
 apply plugin: 'com.google.gms.google-services'

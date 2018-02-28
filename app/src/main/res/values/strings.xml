@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">FireBaseGallery</string>
     <string name="wyloguj">Wyloguj</string>
+    <string name="made">Made by Jolanta Szyszkiewicz</string>
+    <string name="wybierz_obrazek">Wybierz obrazek:</string>
+    <string name="wybrany_obrazek_przez_uzytkownika">Wybrany obrazek przez użytkownika</string>
+    <string name="ustaw_tytul">Ustaw tytuł:</string>
+    <string name="ustaw_opis">Ustaw opis:</string>
+    <string name="zapisz">Zapisz</string>
 </resources>

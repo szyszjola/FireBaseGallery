@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,9 +20,10 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 
-public class FireBaseStorageConector {
+class FireBaseStorageConector {
 
     private StorageReference storage;
 
@@ -29,13 +31,11 @@ public class FireBaseStorageConector {
         storage = FirebaseStorage.getInstance().getReference();
     }
 
-    public void firebaseUpload() {
-        ///adding the file to storage
-        String path = Environment.getExternalStorageDirectory().getPath();
-        String myJpgPath = path + "/Download/girl2.png";
-        Uri file = Uri.fromFile(new File(myJpgPath));
-        //Boolean d = file.exists();
-        StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/png").build();
+    String firebaseUpload(String myPath) {
+        //adding the file to storage
+
+        Uri file = Uri.fromFile(new File(myPath));
+        StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/" + myPath.substring(myPath.lastIndexOf(".") + 1, myPath.length())).build();
         UploadTask uploadTask = storage.child("photo/" + file.getLastPathSegment()).putFile(file, metadata);
         uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -57,18 +57,23 @@ public class FireBaseStorageConector {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // Handle successful uploads on complete
-                Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                try {
+                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                }
+                catch (NullPointerException ex)
+                {
+                }
             }
         });
 
-        Log.w("dd", "dd");
+        return "photo/" + file.getLastPathSegment();
     }
 
     void firebaseDownload(final ImageView imageView, String path) {
 
-        StorageReference avatarRef = storage.child(path);
-        final long ONE_MEGABYTE = 1024 * 1024;
-        avatarRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        StorageReference storageRef = storage.child(path);
+        final long ONE_MEGABYTE = 5000 * 5000;
+        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
