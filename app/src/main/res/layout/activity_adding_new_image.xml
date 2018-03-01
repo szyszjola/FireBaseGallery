@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="pl.szyszjola.firebasegallery.AddingNewImage">
+    tools:context="pl.szyszjola.firebasegallery.AddingNewImage"
+    android:id="@+id/adding_layout">
 
 
     <TextView
@@ -16,18 +17,18 @@
         android:layout_marginStart="14dp"
         android:layout_marginTop="11dp"
         android:text="@string/wybierz_obrazek"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignEnd="@+id/textView2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignStart="@+id/textView"
         android:layout_below="@+id/textView"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="15dp"
         android:contentDescription="@string/wybrany_obrazek_przez_uzytkownika"
         android:scaleType="fitXY"
-        app:srcCompat="@android:drawable/screen_background_dark_transparent" />
+        app:srcCompat="@drawable/add_image" />
 
 
     <TextView
@@ -38,7 +39,7 @@
         android:layout_below="@+id/imageView"
         android:layout_marginTop="21dp"
         android:text="@string/ustaw_tytul"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 
     <TextView
@@ -49,7 +50,7 @@
         android:layout_below="@+id/editTitle"
         android:layout_marginTop="15dp"
         android:text="@string/ustaw_opis"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <EditText
         android:id="@+id/editTitle"
@@ -57,7 +58,6 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/textView3"
         android:layout_below="@+id/textView2"
-        android:layout_marginTop="17dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text=""
@@ -67,9 +67,8 @@
         android:id="@+id/editDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView3"
+        android:layout_alignStart="@+id/textView2"
         android:layout_below="@+id/textView3"
-        android:layout_marginTop="14dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:maxLines="2"

@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 public class ProgressDialogFragment extends DialogFragment {
 
-   static ProgressDialog dialog;
+    static ProgressDialog dialog;
 
     public static ProgressDialogFragment newInstance() {
         return new ProgressDialogFragment();
@@ -20,14 +20,13 @@ public class ProgressDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         //Create new ProgressDialog
-        dialog = new ProgressDialog(getActivity(),ProgressDialog.STYLE_HORIZONTAL);
+        dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_HORIZONTAL);
         dialog.setIndeterminate(true);
         return dialog;
     }
 
-   public static void setProgress(String message)
-   {
-       dialog.setMessage(message);
-   }
+    public static void setProgress(String message) {
+        dialog.setMessage(message);
+    }
 }
 

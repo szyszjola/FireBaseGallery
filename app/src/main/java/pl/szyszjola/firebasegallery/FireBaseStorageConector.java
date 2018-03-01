@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 
 class FireBaseStorageConector {
@@ -81,16 +83,15 @@ class FireBaseStorageConector {
         });
     }
 
-    void firebaseDownload(final ImageView imageView, String path) {
+     void firebaseDownload(final ImageView imageView, String path) {
 
         StorageReference storageRef = storage.child(path);
-        final long ONE_MEGABYTE = 8000 * 8000;
+        final long ONE_MEGABYTE = 6000 * 6000;
         storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1024, false);
-                imageView.setImageBitmap(scaledBitmap);
+              Bitmap bitmap =  decodeSampledBitmapFromResource(bytes, 128,96);
+                        imageView.setImageBitmap(bitmap);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -98,6 +99,46 @@ class FireBaseStorageConector {
                 imageView.setImageResource(R.drawable.image_not_found);
             }
         });
+
     }
 
+//region Skalowanie
+    private int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    private Bitmap decodeSampledBitmapFromResource(byte[] bytes,
+                                                   int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length,options);
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(bytes, 0,bytes.length, options);
+    }
+//endregion
 }
