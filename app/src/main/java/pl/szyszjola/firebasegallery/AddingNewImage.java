@@ -49,7 +49,7 @@ public class AddingNewImage extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FireBaseStorageConector conector = new FireBaseStorageConector(v.getContext(), mDialog);
+                FireBaseStorageConector conector = new FireBaseStorageConector(v.getContext());
                 if (image.equals("")) {
                     Snackbar.make(getCurrentFocus(), "Wybierz zdjęcie które chcesz dodać", Snackbar.LENGTH_LONG).show();
                 } else {
@@ -92,9 +92,8 @@ public class AddingNewImage extends AppCompatActivity {
             picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1024, false);
-            imageView.setImageBitmap(scaledBitmap);
+            Bitmap bitmap = ImageResize.decodeSampledBitmapFromFile(picturePath,150,150);
+            imageView.setImageBitmap(bitmap);
             Uri file = Uri.fromFile(new File(picturePath));
             image = "photo/" + file.getLastPathSegment();
         }

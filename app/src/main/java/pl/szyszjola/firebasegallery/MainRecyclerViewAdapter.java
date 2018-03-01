@@ -1,11 +1,11 @@
 package pl.szyszjola.firebasegallery;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,6 +28,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     private Context mContext;
     private FireBaseStorageConector conector = new FireBaseStorageConector(mContext);
     private static final int FOOTER_VIEW = 1;
+    public static final String PATH_KEY = "PATH";
 
     MainRecyclerViewAdapter(List<Picture.SinglePicture> singlePictureArrayList, Context mContext) {
         this.singlePictureArrayList = singlePictureArrayList;
@@ -81,13 +82,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         try {
             if (holder instanceof NormalViewHolder) {
                 NormalViewHolder viewHolder = (NormalViewHolder) holder;
                 Picture.SinglePicture picture = singlePictureArrayList.get(position);
                 viewHolder.title.setText(picture.getTitle());
-                conector.firebaseDownload(viewHolder.image, picture.getImage());
+                viewHolder.path = picture.getImage();
+                conector.firebaseDownload(viewHolder.image, viewHolder.path, 128,96);
                 viewHolder.description.setText(picture.getDescription());
             } else if (holder instanceof FooterViewHolder) {
                 FooterViewHolder viewHolder = (FooterViewHolder) holder;
@@ -113,10 +115,12 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         return singlePictureArrayList.size() + 1;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         ImageView image;
         TextView title;
         TextView description;
+        String path;
+
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -124,18 +128,32 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             title = itemView.findViewById(R.id.title);
             description = itemView.findViewById(R.id.description);
             itemView.setOnCreateContextMenuListener(this);
+            if (image != null) {
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(v.getContext(), PreviewImage.class);
+                        intent.putExtra(PATH_KEY, path);
+                        v.getContext().startActivity(intent);
+                    }
+                });
+            }
         }
 
+
         @Override
-        public void onCreateContextMenu(ContextMenu menu,final View v, ContextMenu.ContextMenuInfo menuInfo) {
+        public void onCreateContextMenu(ContextMenu menu, final View v, ContextMenu.
+                ContextMenuInfo menuInfo) {
             menu.setHeaderTitle(R.string.app_name);
             menu.add(0, v.getId(), 0, R.string.pobierz).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    if(pobierzZdjecie())
-                        Toast.makeText(v.getContext(),"Pobrano zdjęcie",Toast.LENGTH_SHORT).show();
+                    FireBaseStorageConector conector = new FireBaseStorageConector(v.getContext());
+                    conector.firebaseDownloadFullSize(image, path);
+                    if (true)
+                        Toast.makeText(v.getContext(), "Pobrano zdjęcie", Toast.LENGTH_SHORT).show();
                     else
-                        Toast.makeText(v.getContext(),"Wystąpił błąd podczas pobierania",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "Wystąpił błąd podczas pobierania", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -145,38 +163,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 //                    return true;
 //                }
 //            });
-        }
-
-        private Boolean pobierzZdjecie()
-        {
-            BitmapDrawable draw = (BitmapDrawable) image.getDrawable();
-            Bitmap bitmap = draw.getBitmap();
-            FileOutputStream outStream = null;
-            File sdCard = Environment.getExternalStorageDirectory();
-            File dir = new File(sdCard.getAbsolutePath() + "/ButterflyGallery");
-            dir.mkdirs();
-            String fileName = String.format("%d.jpg", System.currentTimeMillis());
-            File outFile = new File(dir, fileName);
-            try {
-                outStream = new FileOutputStream(outFile);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return false;
-            }
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-            try {
-                outStream.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-            try {
-                outStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return true;
         }
 
     }

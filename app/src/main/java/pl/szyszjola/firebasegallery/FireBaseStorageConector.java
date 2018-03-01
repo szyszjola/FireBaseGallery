@@ -1,16 +1,14 @@
 package pl.szyszjola.firebasegallery;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Message;
+import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,23 +23,18 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 class FireBaseStorageConector {
 
     private StorageReference storage;
     private Context mContext;
-    private DialogFragment mDialog;
 
     FireBaseStorageConector(Context mContext) {
         storage = FirebaseStorage.getInstance().getReference();
         this.mContext = mContext;
-    }
-
-    FireBaseStorageConector(Context mContext, DialogFragment mDialog) {
-        storage = FirebaseStorage.getInstance().getReference();
-        this.mContext = mContext;
-        this.mDialog = mDialog;
     }
 
     void firebaseUpload(String myPath) {
@@ -83,15 +76,15 @@ class FireBaseStorageConector {
         });
     }
 
-     void firebaseDownload(final ImageView imageView, String path) {
+     void firebaseDownload(final ImageView imageView, String path, final Integer reqWidth, final Integer reqHeight) {
 
         StorageReference storageRef = storage.child(path);
         final long ONE_MEGABYTE = 6000 * 6000;
         storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
-              Bitmap bitmap =  decodeSampledBitmapFromResource(bytes, 128,96);
-                        imageView.setImageBitmap(bitmap);
+                Bitmap bitmap =  ImageResize.decodeSampledBitmapFromBytes(bytes, reqWidth,reqHeight);
+                imageView.setImageBitmap(bitmap);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -102,43 +95,44 @@ class FireBaseStorageConector {
 
     }
 
-//region Skalowanie
-    private int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
+    void firebaseDownloadFullSize(final ImageView imageView, String path) {
 
-        if (height > reqHeight || width > reqWidth) {
+        StorageReference storageRef = storage.child(path);
+        final long ONE_MEGABYTE = 6000 * 6000;
+        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap =  BitmapFactory.decodeByteArray(bytes,0,bytes.length);
 
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
+                FileOutputStream outStream = null;
+                File sdCard = Environment.getExternalStorageDirectory();
+                File dir = new File(sdCard.getAbsolutePath() + "/ButterflyGallery");
+                dir.mkdirs();
+                String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                File outFile = new File(dir, fileName);
+                try {
+                    outStream = new FileOutputStream(outFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                try {
+                    outStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    outStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                imageView.setImageResource(R.drawable.image_not_found);
+            }
+        });
 
-        return inSampleSize;
     }
-
-    private Bitmap decodeSampledBitmapFromResource(byte[] bytes,
-                                                   int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.length,options);
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeByteArray(bytes, 0,bytes.length, options);
-    }
-//endregion
 }
