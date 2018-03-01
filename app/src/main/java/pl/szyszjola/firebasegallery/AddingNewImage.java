@@ -5,10 +5,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,11 +16,6 @@ import android.widget.ImageView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class AddingNewImage extends AppCompatActivity {
 
@@ -30,6 +25,7 @@ public class AddingNewImage extends AppCompatActivity {
     Button save;
     String picturePath = "";
     EditText title, description;
+    String image = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +44,22 @@ public class AddingNewImage extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               FireBaseStorageConector conector = new FireBaseStorageConector();
-               String image = conector.firebaseUpload(picturePath);
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-               mDatabase.push().setValue(new Picture.SinglePicture(title.getText().toString(),image, description.getText().toString()));
-               finish();
+                FireBaseStorageConector conector = new FireBaseStorageConector();
+                image = conector.firebaseUpload(picturePath);
+                if(image.equals(""))
+                {
+                    Snackbar.make(getCurrentFocus(),"Wybierz zdjęcie które chcesz dodać",Snackbar.LENGTH_LONG).show();
+                }
+                else {
+                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                    mDatabase.push().setValue(new Picture.SinglePicture(title.getText().toString(), image, description.getText().toString()));
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    finish();
+                }
             }
         });
     }

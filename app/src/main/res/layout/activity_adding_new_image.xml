@@ -84,7 +84,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="22dp"
-        android:backgroundTint="@color/colorButton"
+        android:backgroundTint="@color/colorDark"
         android:text="@string/zapisz" />
 
 

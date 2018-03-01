@@ -1,11 +1,15 @@
 package pl.szyszjola.firebasegallery;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -42,6 +46,7 @@ class FireBaseStorageConector {
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 System.out.println("Upload is " + progress + "% done");
+
             }
         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -65,18 +70,18 @@ class FireBaseStorageConector {
                 }
             }
         });
-
         return "photo/" + file.getLastPathSegment();
     }
 
     void firebaseDownload(final ImageView imageView, String path) {
 
         StorageReference storageRef = storage.child(path);
-        final long ONE_MEGABYTE = 5000 * 5000;
+        final long ONE_MEGABYTE = 8000 * 8000;
         storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
                 imageView.setImageBitmap(bitmap);
             }
         }).addOnFailureListener(new OnFailureListener() {
