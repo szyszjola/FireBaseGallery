@@ -34,6 +34,13 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
     private List<Picture.SinglePicture> pictureList = new ArrayList<>();
     final String  TAG = "TAG";
     FloatingActionButton fab;
+    private static final int NEW_ITEM_CODE = 15;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    public final static String SINGLE_PICTURE_KEY = "SINGLE_PICTURE";
+    public final static String TITLE_KEY = "TITLE";
+    public final static String IMAGE_KEY = "IMAGE";
+    public final static String DESCRIPTION_KEY = "DESCRIPTION";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +87,13 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
             @Override
             public void onClick(View v) {
              Intent intent = new Intent(getApplicationContext(), AddingNewImage.class);
-             startActivity(intent);
+             startActivityForResult(intent, NEW_ITEM_CODE);
             }
         });
 
         //pobieranie danych z bazy danych
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -142,6 +149,15 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
                     Log.e("value", "Permission Denied, You cannot use local drive .");
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == NEW_ITEM_CODE && resultCode == RESULT_OK && data != null)
+        {
+            Bundle bundle = data.getBundleExtra(SINGLE_PICTURE_KEY);
+            myRef.push().setValue(new Picture.SinglePicture(bundle.getString(TITLE_KEY), bundle.getString(IMAGE_KEY), bundle.getString(DESCRIPTION_KEY)));
         }
     }
 }

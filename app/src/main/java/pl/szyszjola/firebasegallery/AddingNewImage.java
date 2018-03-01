@@ -1,5 +1,6 @@
 package pl.szyszjola.firebasegallery;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,8 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import java.io.File;
 
 public class AddingNewImage extends AppCompatActivity {
 
@@ -26,6 +26,8 @@ public class AddingNewImage extends AppCompatActivity {
     String picturePath = "";
     EditText title, description;
     String image = "";
+    private DialogFragment mDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,25 +42,29 @@ public class AddingNewImage extends AppCompatActivity {
                 choseImage();
             }
         });
+        mDialog =  ProgressDialogFragment.newInstance();
         save = findViewById(R.id.btnSave);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FireBaseStorageConector conector = new FireBaseStorageConector();
-                image = conector.firebaseUpload(picturePath);
+                FireBaseStorageConector conector = new FireBaseStorageConector(v.getContext(),mDialog);
                 if(image.equals(""))
                 {
                     Snackbar.make(getCurrentFocus(),"Wybierz zdjęcie które chcesz dodać",Snackbar.LENGTH_LONG).show();
                 }
-                else {
-                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                    mDatabase.push().setValue(new Picture.SinglePicture(title.getText().toString(), image, description.getText().toString()));
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    finish();
+                else
+                {
+                    mDialog.show(getFragmentManager(), "Shutdown");
+                    Intent intent = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(MainRecyclerView.TITLE_KEY, title.getText().toString());
+                    bundle.putString(MainRecyclerView.IMAGE_KEY, image);
+                    bundle.putString(MainRecyclerView.DESCRIPTION_KEY, description.getText().toString());
+                    intent.putExtra(MainRecyclerView.SINGLE_PICTURE_KEY,bundle);
+                    setResult(RESULT_OK,intent);
+                    // Show new ProgressDialogFragment
+                    conector.firebaseUpload(picturePath);
+                    save.setVisibility(View.GONE);
                 }
             }
         });
@@ -83,6 +89,8 @@ public class AddingNewImage extends AppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
             Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1024, false);
             imageView.setImageBitmap(scaledBitmap);
+            Uri file = Uri.fromFile(new File(picturePath));
+            image =  "photo/" + file.getLastPathSegment();
         }
     }
 

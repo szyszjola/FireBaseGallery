@@ -1,15 +1,15 @@
 package pl.szyszjola.firebasegallery;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,29 +23,36 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 
 class FireBaseStorageConector {
 
     private StorageReference storage;
+    private Context mContext;
+    private DialogFragment mDialog;
 
-    FireBaseStorageConector() {
+    FireBaseStorageConector(Context mContext) {
         storage = FirebaseStorage.getInstance().getReference();
+        this.mContext = mContext;
     }
 
-    String firebaseUpload(String myPath) {
-        //adding the file to storage
+    FireBaseStorageConector(Context mContext, DialogFragment mDialog) {
+        storage = FirebaseStorage.getInstance().getReference();
+        this.mContext = mContext;
+        this.mDialog = mDialog;
+    }
 
+    void firebaseUpload(String myPath) {
+        //adding the file to storage
         Uri file = Uri.fromFile(new File(myPath));
-        StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/" + myPath.substring(myPath.lastIndexOf(".") + 1, myPath.length())).build();
+        final StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/" + myPath.substring(myPath.lastIndexOf(".") + 1, myPath.length())).build();
         UploadTask uploadTask = storage.child("photo/" + file.getLastPathSegment()).putFile(file, metadata);
         uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                System.out.println("Upload is " + progress + "% done");
+                ProgressDialogFragment.setProgress("Załadowano "  + Math.round(progress) + "%");
+
 
             }
         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
@@ -63,14 +70,15 @@ class FireBaseStorageConector {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // Handle successful uploads on complete
                 try {
-                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                    ((Activity)mContext).finish();
+                   // Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
                 }
                 catch (NullPointerException ex)
                 {
+                    Toast.makeText(mContext, ex.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        return "photo/" + file.getLastPathSegment();
     }
 
     void firebaseDownload(final ImageView imageView, String path) {
@@ -81,14 +89,13 @@ class FireBaseStorageConector {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-                imageView.setImageBitmap(bitmap);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1024, 1024, false);
+                imageView.setImageBitmap(scaledBitmap);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 imageView.setImageResource(R.drawable.image_not_found);
-                Log.w("TAG", e.getMessage());
             }
         });
     }

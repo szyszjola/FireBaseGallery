@@ -16,7 +16,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     private List<Picture.SinglePicture> singlePictureArrayList;
     private Context mContext;
-    private FireBaseStorageConector conector = new FireBaseStorageConector();
+    private FireBaseStorageConector conector = new FireBaseStorageConector(mContext);
     private static final int FOOTER_VIEW = 1;
 
     MainRecyclerViewAdapter(List<Picture.SinglePicture> singlePictureArrayList, Context mContext) {
@@ -25,7 +25,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
 
     public class FooterViewHolder extends ViewHolder {
-        public FooterViewHolder(View itemView) {
+        FooterViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -36,7 +36,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     }
 
     public class NormalViewHolder extends ViewHolder {
-        public NormalViewHolder(View itemView) {
+        NormalViewHolder(View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
