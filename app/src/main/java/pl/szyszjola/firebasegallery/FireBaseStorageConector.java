@@ -12,8 +12,10 @@ import android.support.annotation.NonNull;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -35,6 +37,28 @@ class FireBaseStorageConector {
     FireBaseStorageConector(Context mContext) {
         storage = FirebaseStorage.getInstance().getReference();
         this.mContext = mContext;
+    }
+
+
+    void firebaseDelete()
+
+    {
+        storage.child("/photo").delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(mContext, "Usunięto pomyślnie", Toast.LENGTH_LONG).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     void firebaseUpload(String myPath) {
@@ -79,7 +103,7 @@ class FireBaseStorageConector {
      void firebaseDownload(final ImageView imageView, String path, final Integer reqWidth, final Integer reqHeight) {
 
         StorageReference storageRef = storage.child(path);
-        final long ONE_MEGABYTE = 6000 * 6000;
+        final long ONE_MEGABYTE = 3000 * 3000;
         storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
@@ -98,7 +122,7 @@ class FireBaseStorageConector {
     void firebaseDownloadFullSize(final ImageView imageView, String path) {
 
         StorageReference storageRef = storage.child(path);
-        final long ONE_MEGABYTE = 6000 * 6000;
+        final long ONE_MEGABYTE = 3000 * 3000;
         storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {

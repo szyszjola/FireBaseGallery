@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainRecyclerView" />
-        <activity android:name=".LogIn">
+        <activity android:name=".LogIn"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +23,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddingNewImage" />
-        <activity android:name=".PreviewImage"></activity>
+        <activity android:name=".PreviewImage" />
+        <activity android:name=".RequestPermissionActivity"
+            android:noHistory="true"></activity>
     </application>
 
 </manifest>

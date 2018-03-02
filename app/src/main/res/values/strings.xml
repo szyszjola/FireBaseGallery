@@ -8,4 +8,10 @@
     <string name="ustaw_opis">Ustaw opis:</string>
     <string name="zapisz">Zapisz</string>
     <string name="pobierz">Pobierz</string>
+    <string name="przelacz">Przełącz użytkownika</string>
+    <string name="zalogowany">Jesteś zalogowany jako:</string>
+    <string name="zaloguj">Zaloguj się</string>
+    <string name="ok">OK</string>
+    <string name="zapamietaj_mnie">Zapamiętaj mnie</string>
+    <string name="witaj">Witaj!</string>
 </resources>

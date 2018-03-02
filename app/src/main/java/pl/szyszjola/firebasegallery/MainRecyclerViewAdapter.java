@@ -2,9 +2,6 @@ package pl.szyszjola.firebasegallery;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -15,10 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -41,7 +34,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, "FOOTER", Toast.LENGTH_SHORT).show();
+                   // conector.firebaseDelete();
                 }
             });
         }
@@ -84,14 +77,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         try {
-            if (holder instanceof NormalViewHolder) {
-                NormalViewHolder viewHolder = (NormalViewHolder) holder;
-                Picture.SinglePicture picture = singlePictureArrayList.get(position);
-                viewHolder.title.setText(picture.getTitle());
-                viewHolder.path = picture.getImage();
-                conector.firebaseDownload(viewHolder.image, viewHolder.path, 128,96);
-                viewHolder.description.setText(picture.getDescription());
-            } else if (holder instanceof FooterViewHolder) {
+            //TYMCZASOWO ZAKOMENTOWANE
+//            if (holder instanceof NormalViewHolder) {
+//                NormalViewHolder viewHolder = (NormalViewHolder) holder;
+//                Picture.SinglePicture picture = singlePictureArrayList.get(position);
+//                viewHolder.title.setText(picture.getTitle());
+//                viewHolder.path = picture.getImage();
+//                conector.firebaseDownload(viewHolder.image, viewHolder.path, 128,96);
+//                viewHolder.description.setText(picture.getDescription());
+          //  } else
+                if (holder instanceof FooterViewHolder) {
                 FooterViewHolder viewHolder = (FooterViewHolder) holder;
             }
         } catch (Exception ex) {
