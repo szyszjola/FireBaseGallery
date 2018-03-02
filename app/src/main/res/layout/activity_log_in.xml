@@ -31,6 +31,7 @@
         android:text="@string/wyloguj"
         tools:ignore="RelativeOverlap"
         tools:layout_editor_absoluteX="221dp"
+        android:visibility="invisible"
         tools:layout_editor_absoluteY="0dp" />
 
     <EditText
@@ -72,7 +73,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/arr"
+        android:background="#FFFFFF"
+        android:shadowColor="#5f6360"
         android:text="@string/ok"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:visibility="invisible" />
 </RelativeLayout>

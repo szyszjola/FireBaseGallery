@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainRecyclerView" />
         <activity android:name=".LogIn"
-            android:noHistory="true">
+      >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

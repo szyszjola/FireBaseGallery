@@ -72,7 +72,6 @@ class FireBaseStorageConector {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 ProgressDialogFragment.setProgress("Załadowano "  + Math.round(progress) + "%");
 
-
             }
         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
             @Override

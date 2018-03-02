@@ -1,6 +1,7 @@
 package pl.szyszjola.firebasegallery;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -105,15 +108,44 @@ public class MainRecyclerView extends AppCompatActivity implements ActivityCompa
             }
         });
     }
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_ITEM_CODE && resultCode == RESULT_OK && data != null) {
             Bundle bundle = data.getBundleExtra(SINGLE_PICTURE_KEY);
             myRef.push().setValue(new Picture.SinglePicture(bundle.getString(TITLE_KEY), bundle.getString(IMAGE_KEY), bundle.getString(DESCRIPTION_KEY)));
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+       getMenuInflater().inflate(R.menu.new_menu,menu);
+       return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_logout:
+                SharedPreferences loginPreferences = getSharedPreferences(LogIn.LOGIN, MODE_PRIVATE);
+                SharedPreferences.Editor editor = loginPreferences.edit();
+                editor.putBoolean(LogIn.KEY_ZAPAMIETANY,false);
+                editor.putBoolean(LogIn.KEY_ZALOGOWANY,false);
+                editor.commit();
+                finish();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        //close the application
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
